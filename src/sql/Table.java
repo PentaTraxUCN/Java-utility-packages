@@ -2,7 +2,7 @@ package sql;
 
 import java.util.ArrayList;
 
-public class Table {
+public class Table { // Used to make an easier overview of the query data
     private ArrayList<ArrayList<String>> table;
 
     public Table(){
