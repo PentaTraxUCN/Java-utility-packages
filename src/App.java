@@ -17,7 +17,8 @@ public class App {
             }
             System.out.println(line);
         }
-        // ArrayList<String> keys = sql.insertRow("INSERT INTO [dbo].[Employee] ( [fname], [minit], [lname], [ssn], [bdate], [address], [sex], [salary], [super_ssn], [dno] ) VALUES ( 'Philip', 'N', 'Nielsen', '098765432', null, 'Lyngvejen 31, Løgstør', 'M', 130000.00, null, 1 )");
+        // This part is used to input data into the server
+        // ArrayList<String> keys = sql.insertRow("INSERT INTO [dbo].[Employee] ( [fname], [minit], [lname], [ssn], [bdate], [address], [sex], [salary], [super_ssn], [dno] ) VALUES ( 'Penta', 'T', 'Rax', '098765432', null, 'Space', 'M', 130000.00, null, 1 )");
         // for (String key : keys) {
         //     System.out.println(key);
         // }
