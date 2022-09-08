@@ -2,7 +2,7 @@ package sql;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class SQLConnection{
+public class SQLConnection{ // Used to simplify the whole connect to sql server process
     private String server_domain;
     private String port;
     private String username;
@@ -12,11 +12,15 @@ public class SQLConnection{
     private int timeout = 30;
     private String connectionUrl="";
 
+    // The constructor has been overloaded to allow for any kind of connectivity, if you want to mess around with that stuff
     public SQLConnection (String server_domain, String port, String username, String password, boolean encrypt, boolean trustCertificate, int loginTimeout ){
         this.server_domain = server_domain;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.encrypt = encrypt;
+        this.trustCertificate = trustCertificate;
+        this.timeout = loginTimeout;
     }
     public SQLConnection (String server_domain, String port, String username, String password){
         this.server_domain = server_domain;
@@ -25,7 +29,7 @@ public class SQLConnection{
         this.password = password;
     }
 
-    public boolean connect(String database){
+    public boolean connect(String database){ // Tests the connection to a database on the server and saves the link so you can use it to send queries
         boolean success = false;
         String url = "jdbc:sqlserver://"+server_domain+":"+port+";database="+database+";user="+username+";password="+password+";encrypt="+encrypt+";trustServerCertificate="+trustCertificate+";loginTimeout="+timeout+";";
         try (Connection connection = DriverManager.getConnection(url)){
@@ -37,7 +41,7 @@ public class SQLConnection{
         return success;
     }
     
-    public Table sendQuery(String query){
+    public Table sendQuery(String query){ // Use this to send basic queries, it'll sum up all the data returned into a table object
         Table table = new Table();
         try (Connection connection = DriverManager.getConnection(connectionUrl)){
             Statement statement = connection.createStatement();
@@ -57,7 +61,7 @@ public class SQLConnection{
         return table;
     }
 
-    public ArrayList<String> insertRow(String insertQuery){
+    public ArrayList<String> insertRow(String insertQuery){ // Used to insert data into the database
         ArrayList<String> keys = new ArrayList<>();
         ResultSet resultSet = null;
         try (Connection connection = DriverManager.getConnection(connectionUrl)){
