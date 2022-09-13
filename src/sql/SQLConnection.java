@@ -10,18 +10,37 @@ public class SQLConnection{
     private boolean trustCertificate = true;
     private int timeout = 30;
     private Connection connection;
+    private static SQLConnection instance;
 
-    public SQLConnection (String server_domain, String port, String username, String password, boolean encrypt, boolean trustCertificate, int loginTimeout ){
+    private SQLConnection(){
+        this.server_domain = "127.0.0.1";
+        this.port = "1433";
+        this.username = "username";
+        this.password = "password";
+    }
+
+    public static SQLConnection getInstance(){
+        if (instance == null){
+            instance = new SQLConnection();
+        }
+        return instance;
+    }
+
+    public void pointToServer(String server_domain, String port, String username, String password){
         this.server_domain = server_domain;
         this.port = port;
         this.username = username;
         this.password = password;
     }
-    public SQLConnection (String server_domain, String port, String username, String password){
+
+    public void pointToServer(String server_domain, String port, String username, String password, boolean encrypt, boolean trustCertificate, int loginTimeout){
         this.server_domain = server_domain;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.encrypt = encrypt;
+        this.trustCertificate = trustCertificate;
+        this.timeout = loginTimeout;
     }
 
     public void connect(String database) throws SQLException {
