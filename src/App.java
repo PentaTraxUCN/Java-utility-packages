@@ -1,26 +1,18 @@
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-import sql.SQLConnection;
-import sql.Table;
-import utilities.*;
+import sql.*;
 
 public class App {
-    public static void main(String[] args) throws Exception { //TODO: Remember to have the jdbc driver in your reference library
-        SQLConnection sql = new SQLConnection("127.0.0.1", "1433", "username", "password");
-        sql.connect("company");
-        Table queryData = sql.sendQuery("SELECT * FROM Employee");
-        System.out.println("Table dimensions: "+queryData.height()+" x "+queryData.width());
-        for (ArrayList<String> collumn : queryData.getTableAsArray()) {
-            String line = "|";
-            for (String data : collumn) {
-                line += data+"|";
-            }
-            System.out.println(line);
-        }
-        // This part is used to input data into the server
-        // ArrayList<String> keys = sql.insertRow("INSERT INTO [dbo].[Employee] ( [fname], [minit], [lname], [ssn], [bdate], [address], [sex], [salary], [super_ssn], [dno] ) VALUES ( 'Penta', 'T', 'Rax', '098765432', null, 'Space', 'M', 130000.00, null, 1 )");
-        // for (String key : keys) {
-        //     System.out.println(key);
-        // }
-    }
+
+	public static void main(String[] args) throws Exception {
+		SQLConnection sql = new SQLConnection("<domain>", "<port>", "<username>", "<password>");
+		sql.connect("<database>");
+		PreparedStatement ps = sql.prepareStatement("SELECT * FROM ?");
+		ps.setString(1, "<table_name>");
+		ps.execute();
+		SQL.logResultSet(ps.getResultSet());
+		
+	}
+
 }

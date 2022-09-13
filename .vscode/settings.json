@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/home/pentatrax/Downloads/mssql-jdbc-10.2.0.jre11.jar"
+    ]
+}

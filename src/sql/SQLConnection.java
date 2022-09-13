@@ -1,8 +1,7 @@
 package sql;
 import java.sql.*;
-import java.util.ArrayList;
 
-public class SQLConnection{ // Used to simplify the whole connect to sql server process
+public class SQLConnection{
     private String server_domain;
     private String port;
     private String username;
@@ -10,17 +9,13 @@ public class SQLConnection{ // Used to simplify the whole connect to sql server 
     private boolean encrypt = true;
     private boolean trustCertificate = true;
     private int timeout = 30;
-    private String connectionUrl="";
+    private Connection connection;
 
-    // The constructor has been overloaded to allow for any kind of connectivity, if you want to mess around with that stuff
     public SQLConnection (String server_domain, String port, String username, String password, boolean encrypt, boolean trustCertificate, int loginTimeout ){
         this.server_domain = server_domain;
         this.port = port;
         this.username = username;
         this.password = password;
-        this.encrypt = encrypt;
-        this.trustCertificate = trustCertificate;
-        this.timeout = loginTimeout;
     }
     public SQLConnection (String server_domain, String port, String username, String password){
         this.server_domain = server_domain;
@@ -29,52 +24,15 @@ public class SQLConnection{ // Used to simplify the whole connect to sql server 
         this.password = password;
     }
 
-    public boolean connect(String database){ // Tests the connection to a database on the server and saves the link so you can use it to send queries
-        boolean success = false;
+    public void connect(String database) throws SQLException {
         String url = "jdbc:sqlserver://"+server_domain+":"+port+";database="+database+";user="+username+";password="+password+";encrypt="+encrypt+";trustServerCertificate="+trustCertificate+";loginTimeout="+timeout+";";
-        try (Connection connection = DriverManager.getConnection(url)){
-            this.connectionUrl = url;
-            success = true;
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return success;
+        connection = DriverManager.getConnection(url);
     }
     
-    public Table sendQuery(String query){ // Use this to send basic queries, it'll sum up all the data returned into a table object
-        Table table = new Table();
-        try (Connection connection = DriverManager.getConnection(connectionUrl)){
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-            ResultSetMetaData metadata = resultSet.getMetaData();
-            table = new Table();
-            while (resultSet.next()){
-                ArrayList<String> collumn = new ArrayList<>();
-                for (int i=1;i<metadata.getColumnCount();i++){
-                    collumn.add(resultSet.getString(i));
-                }
-                table.addRow(collumn);
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return table;
+    public PreparedStatement prepareStatement (String statement) throws SQLException {
+    	return this.connection.prepareStatement(statement);
     }
-
-    public ArrayList<String> insertRow(String insertQuery){ // Used to insert data into the database
-        ArrayList<String> keys = new ArrayList<>();
-        ResultSet resultSet = null;
-        try (Connection connection = DriverManager.getConnection(connectionUrl)){
-            PreparedStatement prepsInsertProduct = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
-            prepsInsertProduct.execute();
-            resultSet = prepsInsertProduct.getGeneratedKeys();
-            while (resultSet.next()){
-                keys.add(resultSet.getString(1));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return keys;
+    public ResultSet query(String query) throws SQLException {
+    	return this.connection.createStatement().executeQuery(query);
     }
-
 }
